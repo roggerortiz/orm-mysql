@@ -9,18 +9,19 @@ using System.Threading.Tasks;
 
 namespace Modelo
 {
-    public class Query
+    class Query
     {
         public Connection connection = new Connection();
         public Grammar grammar = new Grammar();
 
         public Boolean distinct;
         public List<String> columns = new List<String>();
-        public String table = "";
+        public String from = "";
         public List<String[]> joins = new List<String[]>();
         public List<String[]> wheres = new List<String[]>();
         public List<String[]> orders = new List<String[]>();
-        public Int32 limit;
+        public Int32 limit = -1;
+        public Int32 offset = -1;
 
         public String[] operates = { "=", "<", ">", "<=", ">=", "<>", "LIKE", "IS NULL", "IS NOT NULL" };
 
@@ -40,7 +41,7 @@ namespace Modelo
 
         public Query From(String table)
         {
-            this.table = table.Trim();
+            this.from = table.Trim();
 
             return this;
         }
@@ -68,16 +69,16 @@ namespace Modelo
             return this;
         }
 
-        public Query Where(String column, String operate, String value, String boolean = "and")
+        public Query Where(String column, String operate, Object value, String boolean = "and")
         {
-            String[] where = { "basic", column, operate, value, boolean };
+            String[] where = { "basic", column, operate, value.ToString(), boolean };
 
             this.wheres.Add(where);
 
             return this;
         }
 
-        public Query OrWhere(String column, String operate = null, String value = null)
+        public Query OrWhere(String column, String operate = null, Object value = null)
         {
             this.Where(column, operate, value, "or");
 
@@ -145,6 +146,16 @@ namespace Modelo
             return this;
         }
 
+        public Query Offset(Int32 value)
+        {
+            if (value >= 0)
+            {
+                this.offset = value;
+            }
+
+            return this;
+        }
+
         public String ToSql()
         {
             return this.grammar.CompileSelect(this);
@@ -156,7 +167,7 @@ namespace Modelo
 
             DataTable table = this.connection.Select(this.ToSql());
 
-            return ToList(table);
+            return this.ToList(table);
         }
 
         protected List<dynamic> ToList(DataTable table)
@@ -174,7 +185,36 @@ namespace Modelo
             return list;
         }
 
-        protected dynamic ModelInstance()
+        public dynamic Find (Object id)
+        {
+            return this.Select().Where(this.from + "id", "=", id).Limit(1).Get().First();
+        }
+
+        public Int32 Insert(Dictionary<String, Object> attributes)
+        {
+            String sql = this.grammar.CompileInsert(this, attributes);
+
+            return this.connection.Statement(sql);
+        }
+
+        public Int32 Update(Dictionary<String, Object> attributes)
+        {
+            String sql = this.grammar.CompileUpdate(this, attributes);
+
+            return this.connection.AffectingStatement(sql);
+        }
+
+        public void Delete(Object id)
+        {
+            if (id != null)
+            {
+                this.Where(this.from + ".id", "=", id);
+            }
+
+            String sql = this.grammar.CompileDelete(this);
+        }
+
+        public dynamic ModelInstance()
         {
             Type type = Type.GetType(this.TypeModel());
 
@@ -183,9 +223,9 @@ namespace Modelo
 
         protected String TypeModel()
         {
-            String assemblyName = typeof(Query).Assembly.GetName().Name;
+            String assemblyName = this.GetType().Assembly.GetName().Name;
 
-            String className = char.ToUpper(this.table[0]) + this.table.Substring(1);
+            String className = char.ToUpper(this.from[0]) + this.from.Substring(1);
 
             return assemblyName + "." + className;
         }

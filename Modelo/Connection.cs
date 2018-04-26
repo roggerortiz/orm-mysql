@@ -9,7 +9,7 @@ using System.Xml;
 
 namespace Modelo
 {
-    public class Connection
+    class Connection
     {
         private MySqlConnection connection = new MySqlConnection();
 
@@ -84,8 +84,6 @@ namespace Modelo
 
             try
             {
-                this.Open();
-
                 MySqlDataAdapter adapter = new MySqlDataAdapter(sql, this.connection);
                 adapter.Fill(table);
             }
@@ -99,6 +97,52 @@ namespace Modelo
             }
 
             return table;
+        }
+
+        public Int32 Statement(String sql)
+        {
+            Int32 id = -1;
+
+            try
+            {
+                this.Open();
+
+                MySqlCommand command = new MySqlCommand(sql, this.connection);
+                id = Convert.ToInt32(command.ExecuteScalar());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error on Run Statement: " + ex.Message);
+            }
+            finally
+            {
+                this.Close();
+            }
+
+            return id;
+        }
+
+        public Int32 AffectingStatement(String sql)
+        {
+            Int32 result = 0;
+
+            try
+            {
+                this.Open();
+
+                MySqlCommand command = new MySqlCommand(sql, this.connection);
+                result = command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error on Run Affecting Statement: " + ex.Message);
+            }
+            finally
+            {
+                this.Close();
+            }
+
+            return result;
         }
     }
 }

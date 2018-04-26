@@ -3,3 +3,8 @@ D:\proyectos\ORM\Modelo\bin\Debug\Modelo.pdb
 D:\proyectos\ORM\Modelo\obj\Debug\Modelo.dll
 D:\proyectos\ORM\Modelo\obj\Debug\Modelo.pdb
 D:\proyectos\ORM\Modelo\obj\Debug\Modelo.csprojResolveAssemblyReference.cache
+D:\desarrollo\desktop\ORM\Modelo\bin\Debug\Modelo.dll
+D:\desarrollo\desktop\ORM\Modelo\bin\Debug\Modelo.pdb
+D:\desarrollo\desktop\ORM\Modelo\obj\Debug\Modelo.csprojResolveAssemblyReference.cache
+D:\desarrollo\desktop\ORM\Modelo\obj\Debug\Modelo.dll
+D:\desarrollo\desktop\ORM\Modelo\obj\Debug\Modelo.pdb

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Modelo
 {
-    public class Usuario : Modelo
+    public class Usuario : Model
     {
         public Usuario() : base()
         {

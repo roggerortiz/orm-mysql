@@ -9,18 +9,18 @@ using System.Data;
 
 namespace Modelo
 {
-    public abstract class Modelo : DynamicObject
+    public abstract class Model : DynamicObject
     {
         protected String table = null, primaryKey = "id";
         protected Dictionary<String, Object> attributes = new Dictionary<String, Object>();
         protected List<String> fillable = new List<String>();
 
-        public Modelo(Dictionary<String, Object> attributes = null)
+        public Model(Dictionary<String, Object> attributes = null)
         {
             this.Fill(attributes);
         }
 
-        public Modelo Fill(Dictionary<String, Object> attributes)
+        public Model Fill(Dictionary<String, Object> attributes)
         {
             if (attributes == null) attributes = new Dictionary<String, Object>();
 
@@ -37,7 +37,7 @@ namespace Modelo
             return this;
         }
 
-        public Modelo Fill(DataColumnCollection columns, DataRow row)
+        public Model Fill(DataColumnCollection columns, DataRow row)
         {
             if (attributes == null) attributes = new Dictionary<String, Object>();
 
@@ -66,6 +66,55 @@ namespace Modelo
             this.attributes[key] = value;
         }
 
+        public dynamic Find(Object id)
+        {
+            return new Query().Find(id);
+        }
+
+        public List<dynamic> All()
+        {
+            return new Query().From(this.table).Get();
+        }
+
+        public dynamic Make(Dictionary<String, Object> attributes)
+        {
+            Query query = new Query();
+
+            dynamic model = query.ModelInstance();
+            model.Fill(attributes);
+
+            return model;
+        }
+
+        public dynamic Create(Dictionary<String, Object> attributes)
+        {
+            Query query = new Query();
+
+            Int32 id = query.Insert(attributes);
+
+            if (id > 0) return this.Find(id);
+
+            return null;
+        }
+
+        public dynamic Update(Dictionary<String, Object> attributes)
+        {
+            Query query = new Query();
+
+            if (!attributes.ContainsKey("id")) return null;
+
+            Int32 affectingRows = query.Update(attributes);
+
+            if (affectingRows > 0) return this.Find(attributes["id"]);
+
+            return null;
+        }
+
+        public void Delete(Object id)
+        {
+            new Query().Delete(id);
+        }
+
         public override Boolean TryGetMember(GetMemberBinder binder, out Object result)
         {
             String name = binder.Name.ToLower();
@@ -87,10 +136,9 @@ namespace Modelo
 
         public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
         {
-            Type type = typeof(Query);
+            Query query = new Query().From(this.table);
 
-            Query query = (Query) Activator.CreateInstance(type);
-            query.From(this.table);
+            Type type = query.GetType();
 
             result = type.InvokeMember(binder.Name,
                 BindingFlags.OptionalParamBinding | BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.Public,
