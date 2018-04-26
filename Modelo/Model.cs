@@ -11,7 +11,8 @@ namespace Modelo
 {
     public abstract class Model : DynamicObject
     {
-        protected String table = null, primaryKey = "id";
+        protected String table = null;
+        protected String primaryKey = "id";
         protected Dictionary<String, Object> attributes = new Dictionary<String, Object>();
         protected List<String> fillable = new List<String>();
 
@@ -30,7 +31,7 @@ namespace Modelo
 
                 if(isFillable(key))
                 {
-                    this.SetAttribute(key, attribute.Value.ToString());
+                    this.SetAttribute(key, attribute.Value);
                 }
             }
 
@@ -43,10 +44,46 @@ namespace Modelo
 
             foreach (DataColumn column in columns)
             {
-                attributes[column.ColumnName] = row[column.ColumnName];
+                attributes[column.ColumnName] = (row[column.ColumnName] == null) ? "" : row[column.ColumnName];
             }
 
             return this;
+        }
+
+        public List<dynamic> All(List<String> columns = null)
+        {
+            return this.NewQueryBuilder().Get(columns);
+        }
+
+        public dynamic Make(Dictionary<String, Object> attributes)
+        {
+            return this.NewQueryBuilder().ModelInstance().Fill(attributes);
+        }
+
+        public dynamic Create(Dictionary<String, Object> attributes)
+        {
+            Int32 id = this.NewQueryBuilder().Insert(attributes);
+
+            return (id > 0) ? this.NewQueryBuilder().Find(id) : null;
+        }
+
+        public dynamic Update(Dictionary<String, Object> attributes)
+        {
+            if (!attributes.ContainsKey("id")) return null;
+
+            Int32 affectingRows = this.NewQueryBuilder().Update(attributes);
+
+            return (affectingRows > 0) ? this.NewQueryBuilder().Find(attributes["id"]) : null;
+        }
+
+        public void Delete(Object id)
+        {
+            this.NewQueryBuilder().Delete(id);
+        }
+
+        public Query NewQueryBuilder()
+        {
+            return new Query().From(this.table);
         }
         
         protected String RemoveTableFromKey(String key)
@@ -56,63 +93,14 @@ namespace Modelo
 
         protected Boolean isFillable(String key)
         {
-            if (fillable.Contains(key)) return true;
+            if (fillable.Contains(key) || key == "id") return true;
 
             return (fillable.Count == 0 && key.Substring(0, 1) != "_");
         }
 
-        protected void SetAttribute(String key, String value)
+        protected void SetAttribute(String key, Object value)
         {
             this.attributes[key] = value;
-        }
-
-        public dynamic Find(Object id)
-        {
-            return new Query().Find(id);
-        }
-
-        public List<dynamic> All()
-        {
-            return new Query().From(this.table).Get();
-        }
-
-        public dynamic Make(Dictionary<String, Object> attributes)
-        {
-            Query query = new Query();
-
-            dynamic model = query.ModelInstance();
-            model.Fill(attributes);
-
-            return model;
-        }
-
-        public dynamic Create(Dictionary<String, Object> attributes)
-        {
-            Query query = new Query();
-
-            Int32 id = query.Insert(attributes);
-
-            if (id > 0) return this.Find(id);
-
-            return null;
-        }
-
-        public dynamic Update(Dictionary<String, Object> attributes)
-        {
-            Query query = new Query();
-
-            if (!attributes.ContainsKey("id")) return null;
-
-            Int32 affectingRows = query.Update(attributes);
-
-            if (affectingRows > 0) return this.Find(attributes["id"]);
-
-            return null;
-        }
-
-        public void Delete(Object id)
-        {
-            new Query().Delete(id);
         }
 
         public override Boolean TryGetMember(GetMemberBinder binder, out Object result)
@@ -121,7 +109,7 @@ namespace Modelo
 
             if(! attributes.ContainsKey(name))
             {
-                attributes[name] = null;
+                attributes[name] = "";
             }
 
             return attributes.TryGetValue(name, out result);
@@ -129,18 +117,16 @@ namespace Modelo
 
         public override Boolean TrySetMember(SetMemberBinder binder, Object value)
         {
-            this.attributes[binder.Name.ToLower()] = value;
+            this.attributes[binder.Name.ToLower()] = (value == null) ? "" : value;
 
             return true;
         }
 
         public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
         {
-            Query query = new Query().From(this.table);
+            Query query = this.NewQueryBuilder();
 
-            Type type = query.GetType();
-
-            result = type.InvokeMember(binder.Name,
+            result = query.GetType().InvokeMember(binder.Name,
                 BindingFlags.OptionalParamBinding | BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.Public,
                 null, query, args);
 

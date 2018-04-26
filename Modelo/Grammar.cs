@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Modelo
 {
-    class Grammar
+    public class Grammar
     {
         public String CompileSelect(Query query)
         {
@@ -79,7 +79,7 @@ namespace Modelo
 
                 switch (where[0])
                 {
-                    case "basic": sql += where[1] + " " + where[2] + " " + where[3];
+                    case "basic": sql += where[1] + " " + where[2] + " " + this.Parameter(where[3]);
                         break;
 
                     case "null": sql += where[1] + " " + where[2];

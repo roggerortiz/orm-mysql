@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Modelo
 {
-    class Query
+    public class Query
     {
         public Connection connection = new Connection();
         public Grammar grammar = new Grammar();
@@ -25,9 +25,17 @@ namespace Modelo
 
         public String[] operates = { "=", "<", ">", "<=", ">=", "<>", "LIKE", "IS NULL", "IS NOT NULL" };
 
-        public Query Select(String column = "*")
+        public Query Select(List<String> columns = null)
         {
-            if(! this.columns.Contains(column)) this.columns.Add(column.Trim());
+            if (columns == null)
+            {
+                this.columns.Add("*");
+            }
+            else
+            {
+                this.columns = columns;
+                if (!this.columns.Contains("id")) columns.Add("id");
+            }
 
             return this;
         }
@@ -161,33 +169,25 @@ namespace Modelo
             return this.grammar.CompileSelect(this);
         }
 
-        public List<dynamic> Get()
+        public dynamic Find(Object id, List<String> columns = null)
         {
-            if(this.columns.Count == 0) this.Select();
+            return this.Where(this.from + "id", "=", id).Limit(1).Get(columns).First();
+        }
+
+        public dynamic First(List<String> columns = null)
+        {
+            return this.OrderBy("id").Limit(1).Get(columns).First();
+        }
+
+        public List<dynamic> Get(List<String> columns = null)
+        {
+            if (columns != null) this.columns = columns;
+
+            if (this.columns.Count == 0) this.columns.Add("*");
 
             DataTable table = this.connection.Select(this.ToSql());
 
             return this.ToList(table);
-        }
-
-        protected List<dynamic> ToList(DataTable table)
-        {
-            List<dynamic> list = new List<dynamic>();
-
-            foreach (DataRow row in table.Rows)
-            {
-                dynamic model = this.ModelInstance();
-                model.Fill(table.Columns, row);
-
-                list.Add(model);
-            }
-
-            return list;
-        }
-
-        public dynamic Find (Object id)
-        {
-            return this.Select().Where(this.from + "id", "=", id).Limit(1).Get().First();
         }
 
         public Int32 Insert(Dictionary<String, Object> attributes)
@@ -212,6 +212,21 @@ namespace Modelo
             }
 
             String sql = this.grammar.CompileDelete(this);
+        }
+
+        protected List<dynamic> ToList(DataTable table)
+        {
+            List<dynamic> list = new List<dynamic>();
+
+            foreach (DataRow row in table.Rows)
+            {
+                dynamic model = this.ModelInstance();
+                model.Fill(table.Columns, row);
+
+                list.Add(model);
+            }
+
+            return list;
         }
 
         public dynamic ModelInstance()

@@ -9,7 +9,7 @@ using System.Xml;
 
 namespace Modelo
 {
-    class Connection
+    public class Connection
     {
         private MySqlConnection connection = new MySqlConnection();
 

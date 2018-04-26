@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.lvUsuarios = new System.Windows.Forms.ListView();
+            this.listUsuarios = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -38,9 +38,9 @@
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
-            // lvUsuarios
+            // listUsuarios
             // 
-            this.lvUsuarios.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.listUsuarios.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader3,
@@ -48,17 +48,17 @@
             this.columnHeader5,
             this.columnHeader6,
             this.columnHeader7});
-            this.lvUsuarios.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lvUsuarios.FullRowSelect = true;
-            this.lvUsuarios.GridLines = true;
-            this.lvUsuarios.Location = new System.Drawing.Point(0, 0);
-            this.lvUsuarios.MultiSelect = false;
-            this.lvUsuarios.Name = "lvUsuarios";
-            this.lvUsuarios.Scrollable = false;
-            this.lvUsuarios.Size = new System.Drawing.Size(783, 375);
-            this.lvUsuarios.TabIndex = 0;
-            this.lvUsuarios.UseCompatibleStateImageBehavior = false;
-            this.lvUsuarios.View = System.Windows.Forms.View.Details;
+            this.listUsuarios.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listUsuarios.FullRowSelect = true;
+            this.listUsuarios.GridLines = true;
+            this.listUsuarios.Location = new System.Drawing.Point(0, 0);
+            this.listUsuarios.MultiSelect = false;
+            this.listUsuarios.Name = "listUsuarios";
+            this.listUsuarios.Scrollable = false;
+            this.listUsuarios.Size = new System.Drawing.Size(783, 375);
+            this.listUsuarios.TabIndex = 0;
+            this.listUsuarios.UseCompatibleStateImageBehavior = false;
+            this.listUsuarios.View = System.Windows.Forms.View.Details;
             // 
             // columnHeader1
             // 
@@ -106,7 +106,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(783, 375);
-            this.Controls.Add(this.lvUsuarios);
+            this.Controls.Add(this.listUsuarios);
             this.Name = "FormUsuarios";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.FormUsuarios_Load);
@@ -116,7 +116,7 @@
 
         #endregion
 
-        private System.Windows.Forms.ListView lvUsuarios;
+        private System.Windows.Forms.ListView listUsuarios;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;

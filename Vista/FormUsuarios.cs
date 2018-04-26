@@ -25,21 +25,21 @@ namespace ORM
 
         private void ListarUsuarios()
         {
-            dynamic usuario = new Usuario();
+            dynamic usu = ((dynamic)new Usuario()).First();
 
-            List<dynamic> usuarios = usuario.All();
+            List<dynamic> usuarios = ((dynamic)new Usuario()).Select(new List<String>() { "apellidos", "nombres" }).Where("categoria", "=", 2).Get();
 
-            foreach (dynamic item in usuarios)
+            foreach (dynamic usuario in usuarios)
             {
-                ListViewItem listItem = new ListViewItem(item.id.ToString());
-                listItem.SubItems.Add(item.apellidos);
-                listItem.SubItems.Add(item.nombres);
-                listItem.SubItems.Add(item.direccion);
-                listItem.SubItems.Add(item.telefono);
-                listItem.SubItems.Add(item.usuario);
-                listItem.SubItems.Add(item.categoria);
+                ListViewItem listItem = new ListViewItem(usuario.id.ToString());
+                listItem.SubItems.Add(usuario.apellidos);
+                listItem.SubItems.Add(usuario.nombres);
+                listItem.SubItems.Add(usuario.direccion);
+                listItem.SubItems.Add(usuario.telefono);
+                listItem.SubItems.Add(usuario.usuario);
+                listItem.SubItems.Add(usuario.categoria);
 
-                lvUsuarios.Items.Add(listItem);
+                listUsuarios.Items.Add(listItem);
             }
         }
     }
