@@ -1,0 +1,7 @@
+D:\desarrollo\desktop\ORM\Controlador\bin\Debug\Controlador.dll
+D:\desarrollo\desktop\ORM\Controlador\bin\Debug\Controlador.pdb
+D:\desarrollo\desktop\ORM\Controlador\bin\Debug\Modelo.dll
+D:\desarrollo\desktop\ORM\Controlador\bin\Debug\Modelo.pdb
+D:\desarrollo\desktop\ORM\Controlador\obj\Debug\Controlador.csprojResolveAssemblyReference.cache
+D:\desarrollo\desktop\ORM\Controlador\obj\Debug\Controlador.dll
+D:\desarrollo\desktop\ORM\Controlador\obj\Debug\Controlador.pdb

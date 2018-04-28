@@ -9,3 +9,5 @@ D:\desarrollo\desktop\ORM\Vista\bin\Debug\Modelo.dll
 D:\desarrollo\desktop\ORM\Vista\bin\Debug\Modelo.pdb
 D:\desarrollo\desktop\ORM\Vista\obj\Debug\ORM.exe
 D:\desarrollo\desktop\ORM\Vista\obj\Debug\ORM.pdb
+D:\desarrollo\desktop\ORM\Vista\bin\Debug\Controlador.dll
+D:\desarrollo\desktop\ORM\Vista\bin\Debug\Controlador.pdb

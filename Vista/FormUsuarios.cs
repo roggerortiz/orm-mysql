@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Modelo;
+using Controlador;
 
 namespace ORM
 {
@@ -25,9 +25,7 @@ namespace ORM
 
         private void ListarUsuarios()
         {
-            dynamic usu = ((dynamic)new Usuario()).First();
-
-            List<dynamic> usuarios = ((dynamic)new Usuario()).Select(new List<String>() { "apellidos", "nombres" }).Where("categoria", "=", 2).Get();
+            List<dynamic> usuarios = Usuario.Listar();
 
             foreach (dynamic usuario in usuarios)
             {

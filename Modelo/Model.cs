@@ -11,40 +11,62 @@ namespace Modelo
 {
     public abstract class Model : DynamicObject
     {
-        protected String table = null;
-        protected String primaryKey = "id";
-        protected Dictionary<String, Object> attributes = new Dictionary<String, Object>();
-        protected List<String> fillable = new List<String>();
+        private Type type;
+        protected String table;
+        protected String primaryKey;
+        protected Dictionary<String, Object> attributes;
+        protected List<String> fillable;
 
         public Model(Dictionary<String, Object> attributes = null)
         {
+            this.type = Type.GetType(this.TypeModel());
+            this.table = this.GetTable();
+            this.primaryKey = "id";
+            this.attributes = new Dictionary<String, Object>();
+            this.fillable = new List<String>();
             this.Fill(attributes);
         }
 
-        public Model Fill(Dictionary<String, Object> attributes)
+        private String TypeModel()
         {
-            if (attributes == null) attributes = new Dictionary<String, Object>();
+            String assemblyName = this.GetType().Assembly.GetName().Name;
 
-            foreach(KeyValuePair<String, Object> attribute in attributes)
+            String className = char.ToUpper(this.GetTable()[0]) + this.GetTable().Substring(1);
+
+            return assemblyName + "." + className;
+        }
+
+        private String GetTable()
+        {
+            return this.GetType().Name.ToLower();
+        }
+
+        public dynamic Fill(Dictionary<String, Object> attributes = null)
+        {
+            if (attributes != null)
             {
-                String key = this.RemoveTableFromKey(attribute.Key);
-
-                if(isFillable(key))
+                foreach (KeyValuePair<String, Object> attribute in attributes)
                 {
-                    this.SetAttribute(key, attribute.Value);
+                    String key = this.RemoveTableFromKey(attribute.Key);
+
+                    if (isFillable(key))
+                    {
+                        this.SetAttribute(key, attribute.Value);
+                    }
                 }
             }
 
             return this;
         }
 
-        public Model Fill(DataColumnCollection columns, DataRow row)
+        public dynamic Fill(DataColumnCollection columns, DataRow row)
         {
-            if (attributes == null) attributes = new Dictionary<String, Object>();
-
-            foreach (DataColumn column in columns)
+            if (attributes != null)
             {
-                attributes[column.ColumnName] = (row[column.ColumnName] == null) ? "" : row[column.ColumnName];
+                foreach (DataColumn column in columns)
+                {
+                    attributes[column.ColumnName] = (row[column.ColumnName] == null) ? "" : row[column.ColumnName];
+                }
             }
 
             return this;
@@ -57,7 +79,7 @@ namespace Modelo
 
         public dynamic Make(Dictionary<String, Object> attributes)
         {
-            return this.NewQueryBuilder().ModelInstance().Fill(attributes);
+            return this.Fill(attributes);
         }
 
         public dynamic Create(Dictionary<String, Object> attributes)
@@ -83,7 +105,7 @@ namespace Modelo
 
         public Query NewQueryBuilder()
         {
-            return new Query().From(this.table);
+            return new Query(this.type).From(this.table);
         }
         
         protected String RemoveTableFromKey(String key)
@@ -93,7 +115,7 @@ namespace Modelo
 
         protected Boolean isFillable(String key)
         {
-            if (fillable.Contains(key) || key == "id") return true;
+            if (fillable.Contains(key) || key == this.primaryKey) return true;
 
             return (fillable.Count == 0 && key.Substring(0, 1) != "_");
         }

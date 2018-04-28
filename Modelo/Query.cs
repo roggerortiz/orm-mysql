@@ -11,17 +11,32 @@ namespace Modelo
 {
     public class Query
     {
+        protected Type type = null;
         public Connection connection = new Connection();
         public Grammar grammar = new Grammar();
-
         public Boolean distinct;
-        public List<String> columns = new List<String>();
-        public String from = "";
-        public List<String[]> joins = new List<String[]>();
-        public List<String[]> wheres = new List<String[]>();
-        public List<String[]> orders = new List<String[]>();
-        public Int32 limit = -1;
-        public Int32 offset = -1;
+        public List<String> columns;
+        public String from;
+        public List<String[]> joins;
+        public List<String[]> wheres;
+        public List<String[]> orders;
+        public Int32 limit;
+        public Int32 offset;
+
+        public Query(Type type = null)
+        {
+            this.type = type;
+            this.connection = new Connection();
+            this.grammar = new Grammar();
+            this.distinct = false;
+            this.columns = new List<String>();
+            this.from = String.Empty;
+            this.joins = new List<String[]>();
+            this.wheres = new List<String[]>();
+            this.orders = new List<String[]>();
+            this.limit = -1;
+            this.offset = -1;
+        }
 
         public String[] operates = { "=", "<", ">", "<=", ">=", "<>", "LIKE", "IS NULL", "IS NOT NULL" };
 
@@ -220,29 +235,13 @@ namespace Modelo
 
             foreach (DataRow row in table.Rows)
             {
-                dynamic model = this.ModelInstance();
+                dynamic model = Activator.CreateInstance(this.type);
                 model.Fill(table.Columns, row);
 
                 list.Add(model);
             }
 
             return list;
-        }
-
-        public dynamic ModelInstance()
-        {
-            Type type = Type.GetType(this.TypeModel());
-
-            return Activator.CreateInstance(type);
-        }
-
-        protected String TypeModel()
-        {
-            String assemblyName = this.GetType().Assembly.GetName().Name;
-
-            String className = char.ToUpper(this.from[0]) + this.from.Substring(1);
-
-            return assemblyName + "." + className;
         }
     }
 }

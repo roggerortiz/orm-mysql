@@ -8,9 +8,6 @@ namespace Modelo
 {
     public class Usuario : Model
     {
-        public Usuario() : base()
-        {
-            this.table = "usuario";
-        }
+
     }
 }
