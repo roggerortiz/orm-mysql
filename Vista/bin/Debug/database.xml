@@ -1,7 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<Conexion>
-  <Server>127.0.0.1</Server>
-  <Database>facturacion2</Database>
-  <UserID>root</UserID>
-  <Password>admin</Password>
-</Conexion>
